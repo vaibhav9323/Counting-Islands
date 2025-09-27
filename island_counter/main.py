@@ -42,10 +42,7 @@ def count_and_map_islands(grid: List[List[str]]) -> int:
         for c in range(cols):
             if grid[r][c] == '1':
                 island_count += 1
-                # --- START OF FIX ---
-                # Start island IDs at 2 to avoid conflict with the land character '1'.
                 island_id = str(island_count + 1)
-                # --- END OF FIX ---
 
                 q = deque([(r, c)])
                 grid[r][c] = island_id
