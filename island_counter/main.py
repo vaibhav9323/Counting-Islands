@@ -1,8 +1,10 @@
 import sys
 import argparse
+import time  # Import the time module
 from collections import deque
-from typing import List, Set, Tuple
+from typing import List
 
+# (The rest of your code, like COLORS and print_colored_grid, remains the same)
 # ANSI escape codes for colors
 COLORS = [
     "\033[91m",  # Red
@@ -21,11 +23,14 @@ def print_colored_grid(grid: List[List[str]]):
     for row in grid:
         for cell in row:
             if cell.isdigit() and cell != '0':
+                # Assign a color based on the island's number
                 color_index = (int(cell) - 1) % len(COLORS)
+                # Use a Windows-compatible character instead of '█'
                 print(f"{COLORS[color_index]}{'#'}{RESET_COLOR}", end="")
             else:
+                # Print water as a simple character
                 print("~", end="")
-        print()
+        print()  # Newline for the next row
 
 
 def count_and_map_islands(grid: List[List[str]]) -> int:
@@ -42,6 +47,7 @@ def count_and_map_islands(grid: List[List[str]]) -> int:
         for c in range(cols):
             if grid[r][c] == '1':
                 island_count += 1
+                # Start island IDs at 2 to avoid conflict with the land character '1'.
                 island_id = str(island_count + 1)
 
                 q = deque([(r, c)])
@@ -121,12 +127,24 @@ def main():
         sys.exit(1)
 
     args = parser.parse_args()
+
+    # --- START of Timing Logic ---
+    start_time = time.perf_counter()
+
     grid = parse_file(args.filepath)
 
     grid_for_mapping = [row[:] for row in grid]
     result = count_and_map_islands(grid_for_mapping)
 
+    end_time = time.perf_counter()
+    # --- END of Timing Logic ---
+
+    # The final count is the primary output to STDOUT
     print(result)
+
+    # All diagnostic information, including timing, goes to STDERR
+    execution_time = (end_time - start_time) * 1000  # Convert to milliseconds
+    print(f"\nTime to count islands: {execution_time:.2f} ms", file=sys.stderr)
 
     if args.visualize:
         print_colored_grid(grid_for_mapping)
