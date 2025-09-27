@@ -1,0 +1,9 @@
+*.txt text
+*.md text
+*.py text
+*.json text
+*.html text
+*.css text
+
+*.sh text eol=lf
+Dockerfile text eol=lf
