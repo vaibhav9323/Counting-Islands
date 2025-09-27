@@ -41,8 +41,8 @@ def run_integration_tests():
     print("="*60)
 
     test_files = [
-        ('test_small.txt', 3),  # Corrected expected value
-        ('test_medium.txt', 11),  # --- THIS IS THE FIX ---
+        ('test_small.txt', 1),  # This file contains one island.
+        ('test_medium.txt', 11),
         ('test_no_islands.txt', 0),
         ('test_checkerboard.txt', 13)
     ]

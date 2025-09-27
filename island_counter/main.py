@@ -21,27 +21,16 @@ def print_colored_grid(grid: List[List[str]]):
     for row in grid:
         for cell in row:
             if cell.isdigit() and cell != '0':
-                # Assign a color based on the island's number
                 color_index = (int(cell) - 1) % len(COLORS)
-                print(f"{COLORS[color_index]}{'█'}{RESET_COLOR}", end="")
+                print(f"{COLORS[color_index]}{'#'}{RESET_COLOR}", end="")
             else:
-                # Print water as a simple character
                 print("~", end="")
-        print()  # Newline for the next row
+        print()
 
 
 def count_and_map_islands(grid: List[List[str]]) -> int:
     """
     Counts the number of islands and maps them on the grid for visualization.
-
-    An island is a group of '1's connected horizontally or vertically.
-    This function modifies the grid in-place to assign a unique number to each island.
-
-    Args:
-        grid: A list of lists of strings, where each string is '0' or '1'.
-
-    Returns:
-        The total number of islands.
     """
     if not grid or not grid[0]:
         return 0
@@ -53,17 +42,17 @@ def count_and_map_islands(grid: List[List[str]]) -> int:
         for c in range(cols):
             if grid[r][c] == '1':
                 island_count += 1
-                # FIX: Start island IDs at 2 to avoid conflict with '1' for land.
+                # --- START OF FIX ---
+                # Start island IDs at 2 to avoid conflict with the land character '1'.
                 island_id = str(island_count + 1)
+                # --- END OF FIX ---
 
-                # Start BFS to find and mark all parts of this island
                 q = deque([(r, c)])
-                grid[r][c] = island_id  # Mark the starting point
+                grid[r][c] = island_id
 
                 while q:
                     row, col = q.popleft()
 
-                    # Check all 4 directions
                     for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
                         nr, nc = row + dr, col + dc
 
@@ -71,7 +60,6 @@ def count_and_map_islands(grid: List[List[str]]) -> int:
                             0 <= nc < cols and
                                 grid[nr][nc] == '1'):
 
-                            # Mark this part of the island
                             grid[nr][nc] = island_id
                             q.append((nr, nc))
 
@@ -81,7 +69,6 @@ def count_and_map_islands(grid: List[List[str]]) -> int:
 def parse_file(file_path: str) -> List[List[str]]:
     """
     Parses the input file into a 2D list of characters.
-    Handles potential file errors and basic input validation.
     """
     try:
         with open(file_path, 'r') as f:
@@ -128,7 +115,7 @@ def main():
     )
     parser.add_argument(
         "--visualize",
-        action="store_true",  # This makes it a flag
+        action="store_true",
         help="Display a visual map of the islands in the terminal."
     )
 
@@ -139,16 +126,11 @@ def main():
     args = parser.parse_args()
     grid = parse_file(args.filepath)
 
-    # We create a copy if we need to visualize, to keep the original grid unmodified
-    # for other potential operations, though we modify it in-place in the function.
     grid_for_mapping = [row[:] for row in grid]
-
     result = count_and_map_islands(grid_for_mapping)
 
-    # The count is always the primary output to STDOUT
     print(result)
 
-    # If the visualize flag is set, print the colored grid to STDERR
     if args.visualize:
         print_colored_grid(grid_for_mapping)
 
